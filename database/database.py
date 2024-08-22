@@ -1,9 +1,7 @@
 import sqlite3
 
-conn= sqlite3.connect('database.db')
-
+conn= sqlite3.connect('database/databasefile.db')
 cursor = conn.cursor()
-
 
 RegionLimits = """
 CREATE TABLE IF NOT EXISTS RegionLimits( 
@@ -32,7 +30,8 @@ CREATE TABLE IF NOT EXISTS CountryDetails(
 Users = """
 CREATE TABLE IF NOT EXISTS Users( 
     UserID INT PRIMARY KEY, 
-    Name TEXT, 
+    Name TEXT,
+    Role TEXT, 
     Email VARCHAR UNIQUE,
     Password  VARCHAR, 
     AccessedRegions VARCHAR)
@@ -44,7 +43,7 @@ cursor.execute(CountryDetails)
 cursor.execute(Users)
 
 
-## Insert data in the RegionLimits table
+## sample data entered in the region_limits table
 
 # cursor.execute("""
 # INSERT INTO RegionLimits(RegionID, RegionName, TotalLimitsUSD, TotalOutstandingUSD) VALUES
@@ -58,6 +57,7 @@ cursor.execute(Users)
 #     (8, 'China', 900000.00, 350000.00),
 #     (9, 'India', 650000.00, 280000.00),
 #     (10, 'Russia', 700000.00, 320000.00);""")
+# conn.commit()
 
 cursor.execute("SELECT * FROM RegionLimits")
 data = cursor.fetchall()
@@ -65,7 +65,7 @@ for line in data:
     print(line)
 
 
-## Inserting data in the CountryDetails table
+## sample data entered in the country_details table
 
 # sql = """
 # INSERT INTO CountryDetails (
@@ -85,6 +85,7 @@ for line in data:
 # """
 
 # cursor.execute(sql)
+# conn.commit()
 
 cursor.execute("SELECT * FROM CountryDetails")
 data = cursor.fetchall()
@@ -92,20 +93,22 @@ for line in data:
     print(line)
 
 
-## Insert data in the Users table
+## sample data entered in the Users table
 
 # cursor.execute("""
-# INSERT INTO Users (UserID, Name, Email, Password, AccessedRegions) VALUES
-#   (1, 'Alice', 'alice.smith@example.com', 'alicepass123', 'New York, USA'),
-#   (2, 'Bob', 'bob.jones@example.com', 'bobpass456', 'Toronto, Canada'),
-#   (3, 'Charlie', 'charlie.brown@example.com', 'charliepass789', 'London, UK'),
-#   (4, 'Diana', 'diana.prince@example.com', 'dianapass101', 'Sydney, Australia'),
-#   (5, 'Ethan', 'ethan.hunt@example.com', 'ethanpass202', 'Berlin, Germany'),
-#   (6, 'Fiona', 'fiona.glenanne@example.com', 'fionapass303', 'Dublin, Ireland'),
-#   (7, 'George', 'george.smith@example.com', 'georgepass404', 'Paris, France'),
-#   (8, 'Hannah', 'hannah.montana@example.com', 'hannahpass505', 'Rome, Italy'),
-#   (9, 'Isaac', 'isaac.newton@example.com', 'isaacpass606', 'Madrid, Spain'),
-#   (10, 'Jack', 'jack.doe@example.com', 'jackpass707', 'Riyadh, Saudi Arabia');""")
+# INSERT INTO Users(UserID, Name, Role, Email, Password, AccessedRegions) VALUES
+#   (1, 'Alice', 'user', 'alice.smith@example.com', 'alicepass123', 'New York, USA'),
+#   (2, 'Bob', 'admin', 'bob.jones@example.com', 'bobpass456', 'Toronto, Canada'),
+#   (3, 'Charlie', 'user', 'charlie.brown@example.com', 'charliepass789', 'London, UK'),
+#   (4, 'Diana', 'user', 'diana.prince@example.com', 'dianapass101', 'Sydney, Australia'),
+#   (5, 'Ethan', 'user', 'ethan.hunt@example.com', 'ethanpass202', 'Berlin, Germany'),
+#   (6, 'Fiona', 'user', 'fiona.glenanne@example.com', 'fionapass303', 'Dublin, Ireland'),
+#   (7, 'George', 'user', 'george.smith@example.com', 'georgepass404', 'Paris, France'),
+#   (8, 'Hannah', 'user', 'hannah.montana@example.com', 'hannahpass505', 'Rome, Italy'),
+#   (9, 'Isaac', 'admin', 'isaac.newton@example.com', 'isaacpass606', 'Madrid, Spain'),
+#   (10, 'Jack', 'admin', 'jack.doe@example.com', 'jackpass707', 'Riyadh, Saudi Arabia');""")
+# conn.commit()
+
 
 cursor.execute("SELECT * FROM Users")
 data = cursor.fetchall()
