@@ -1,0 +1,11 @@
+[client]
+showErrorDetails = false
+showWarningOnDirectExecution = false
+
+[theme]
+
+primaryColor="#585858"
+backgroundColor="#F8F8F8"
+secondaryBackgroundColor="#e6f3ff"
+textColor="#262730"
+font="sans serif"
