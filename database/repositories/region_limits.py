@@ -7,7 +7,7 @@ script_dir = os.path.dirname(__file__)
 db_path = os.path.join(script_dir, '..', 'databasefile.db')
 db_path = os.path.abspath(db_path)
 
-# Establish a connection to the databasefile
+
 
 # Adds an entry to the region_limits table in the databasefile and then commits it (permanent)
 def add_entry(RegionID:int,RegionName:str, TotalLimitsUSD:float, TotalOutstandingUSD:float ):

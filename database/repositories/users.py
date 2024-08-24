@@ -1,6 +1,7 @@
 # All the sql queries for the users table will be defined here
 import sqlite3
 import os
+import pandas as pd
 
 # Get the path to the current databasefile
 script_dir = os.path.dirname(__file__)
@@ -21,10 +22,10 @@ def add_entry(UserID:int, Name:str, Role:str, Email:str, Password:str, AccessedR
         VALUES(?, ?, ?, ?, ?, ?)""", (UserID, Name, Role, Email, Password, AccessedRegions))
         conn.commit()
         conn.close()
+        return None
 
     except Exception as e:
-        print(f"Error occured : {e}")
-        return None
+        return (f"Error : {e}")
 
 
 # Retreives an entry based on its ID
@@ -43,12 +44,12 @@ def  get_entry(UserID:int):
             return entry
         
         else:
-            print({'Error' : f"User with ID {UserID} doesn't exist"})
-            return None
+            return (f"Error : User with ID {UserID} not found")
+            
         
     except Exception as e:
         return {f"Error occured : {e}"}
-        return None
+        
 
 
 # Updates an entry by its RegionID and then commits it
@@ -78,7 +79,7 @@ def update_entry(UserID:int, Name:str, Role:str, Email:str, Password:str, Access
             print({f"Error occured : {e}"})
 
     else:
-         print({'Error' : f"Entry with ID {UserID} not found"})
+        return (f"Error : User with ID {UserID} not found")
   
 
 # Deletes an entry based on its ID
@@ -97,12 +98,13 @@ def  delete_entry(UserID:int):
             WHERE UserID = ?""", (UserID,))
             conn.commit()
             conn.close()
+            return None
 
         except Exception as e:
-            print({f"Error occured : {e}"})
+            return (f"Error occured : {e}")
     
     else:
-         print({'Error' : f"Entry with ID {UserID} not found"})
+        return (f"Error : User with ID {UserID} not found")
 
 
 # Prints all the entries present in the Users table
@@ -114,10 +116,14 @@ def get_all():
         cursor.execute("""
         SELECT * FROM Users""")
         data = cursor.fetchall()
-        for entry in data:
-            print(entry)
+        return data
     
     except Exception as e :
-        print({f"Error occured' : {e}"})
+        return (f"Error occured' : {e}")
 
 
+
+data = pd.DataFrame(get_entry(5)).values.reshape(1, -1)
+data = pd.DataFrame(data, columns = ['id', 'name', 'role', 'email', 'password', 'region'])
+
+print(data)
