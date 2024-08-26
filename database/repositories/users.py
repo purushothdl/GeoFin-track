@@ -122,8 +122,24 @@ def get_all():
         return (f"Error occured' : {e}")
 
 
+# Gets the next availabel UserID (also does garbage collection)
+def get_next_id():
 
-data = pd.DataFrame(get_entry(5)).values.reshape(1, -1)
-data = pd.DataFrame(data, columns = ['id', 'name', 'role', 'email', 'password', 'region'])
+    user_id = []
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
 
-print(data)
+    data = list(cursor.execute('select * from Users'))
+    conn.commit()
+    conn.close()
+    for line in data:
+        user_id.append(line[0])
+    
+    for i in range(1, max(user_id)+1):
+        if i not in user_id:
+            return i
+        else:
+            set = True
+
+    if set:
+        return max(user_id) + 1

@@ -2,14 +2,16 @@ import streamlit as st
 import os
 import time
 import pandas as pd
-from database.repositories.users import get_entry, update_entry, add_entry, delete_entry, get_all
+from database.repositories.users import get_entry, update_entry, add_entry, delete_entry, get_all, get_next_id
+
+
 
 
 # Get the path to the current databasefile
-script_dir = os.path.dirname(__file__)
-db_path = os.path.join(script_dir, '..', '..', 'database', 'databasefile.db')
-db_path = os.path.abspath(db_path)
-
+# script_dir = os.path.dirname(__file__)
+# db_path = os.path.join(script_dir, '..', '..', 'database', 'databasefile.db')
+# db_path = os.path.abspath(db_path)
+# id_path = os.path.join(script_dir, '..', '..', 'database', 'users.py')
 
 st.set_page_config(page_title="User Management", page_icon=":material/account_circle:")
 st.sidebar.header("User Management")
@@ -28,7 +30,7 @@ def main_user_management():
             with st.expander('**Add New User Details**'):
                 st.write('')
                 with st.popover('Click here to add new user'):     
-                    id = st.text_input('UserID', key = 'id_ad')
+                    id = get_next_id()
                     name = st.text_input('Name', key = 'name_ad')
                     options = ['admin', 'user']
                     role = st.selectbox('Select you role', options, key = 'role_ad')
@@ -76,7 +78,7 @@ def main_user_management():
                         
                         if submit:
                                 update_entry(id, name, role, email, password, region )
-                                msg = st.toast('Updating user info...')
+                                msg = st.toast(f"Updating user info... {get_next_id()}")
                                 time.sleep(1)
                                 msg.toast('User data updated', icon = '✅')
 
