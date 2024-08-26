@@ -2,16 +2,19 @@ import streamlit as st
 import os
 import time
 import pandas as pd
-from database.repositories.users import get_entry, update_entry, add_entry, delete_entry, get_all, get_next_id
 
+from database.repositories.users import(
+    add_entry,
+    get_entry, 
+    get_by_email, 
+    update_entry,
+    update_by_mail,  
+    delete_entry,
+    delete_by_mail, 
+    get_all, 
+    get_next_id
+)
 
-
-
-# Get the path to the current databasefile
-# script_dir = os.path.dirname(__file__)
-# db_path = os.path.join(script_dir, '..', '..', 'database', 'databasefile.db')
-# db_path = os.path.abspath(db_path)
-# id_path = os.path.join(script_dir, '..', '..', 'database', 'users.py')
 
 st.set_page_config(page_title="User Management", page_icon=":material/account_circle:")
 st.sidebar.header("User Management")
@@ -56,17 +59,18 @@ def main_user_management():
         with col2:
         
             st.header("**Update User**")
-            st.write("Update existing users in the database by the UserID.")
+            st.write("Update existing users in the database by the User Email.")
             st.write('')
-            with st.expander('**Enter the UserID**'):   
-                id = st.text_input('UserID', key = 'update_id')
+            with st.expander('**Enter the User Email**'):   
+                mail = st.text_input('Email', key = 'update_mail')
                 
-                if id != '':
-                    data = get_entry(id)
+                if mail != '':
+                    data = get_by_email(mail)
 
                     if 'Error' not in data:
                        
                         with st.popover('**Update User information**'):
+                            # id = st.text_input('ID', data[0], key = 'id_up')
                             name = st.text_input('Name', data[1], key = 'name_up' )
                             options = ['admin', 'user']
                             index = options.index(data[2])
@@ -77,13 +81,14 @@ def main_user_management():
                             submit = st.button('**Update**')       
                         
                         if submit:
-                                update_entry(id, name, role, email, password, region )
-                                msg = st.toast(f"Updating user info... {get_next_id()}")
+                                update_by_mail(name, role, email, password, region )
+                                msg = st.toast(f"Updating user info...")
                                 time.sleep(1)
                                 msg.toast('User data updated', icon = '✅')
 
                     else:
-                        st.error(f"User with UserID {id} not found")
+                        st.error(data)
+                        #st.error(f"Error : User with Email {mail} not found")
                     
                             
 
@@ -93,13 +98,13 @@ def main_user_management():
         with col1:
 
             st.header('**Get User**')
-            st.write('Retrieve an existing user from the database using UserID.')
-            with st.expander('**Enter the UserID**'):
-                id = st.text_input('ID', key = 'id_get')
+            st.write('Retrieve an existing user from the database using User Email.')
+            with st.expander('**Enter the User Email**'):
+                mail = st.text_input('Email', key = 'mail_get')
                 get = st.button('**Get User**')
                 
                 if get:
-                    entry = get_entry(id)
+                    entry = get_by_email(mail)
                     
                     if 'Error' in entry:
                         st.error(f"{entry}")
@@ -114,13 +119,13 @@ def main_user_management():
         with col2:
 
             st.header('**Delete User**')
-            st.write('Delete the existing user from the database by the UserID.')
-            with st.expander('**Enter the UserID**'):
-                id = st.text_input('ID', key = 'id_del')
+            st.write('Delete the existing user from the database by the User Email.')
+            with st.expander('**Enter the User Email**'):
+                mail = st.text_input('Email', key = 'mail_del')
                 delete = st.button('**Delete User**')
 
             if delete:
-                outcome = delete_entry(id)
+                outcome = delete_by_mail(mail)
                 if outcome is None:
                     msg = st.toast('Deleting user from the database...')
                     time.sleep(1)

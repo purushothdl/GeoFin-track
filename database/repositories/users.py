@@ -8,7 +8,6 @@ script_dir = os.path.dirname(__file__)
 db_path = os.path.join(script_dir, '..', 'databasefile.db')
 db_path = os.path.abspath(db_path)
 
-# Establish a connection to the databasefile
 
 
 # Adds an entry to the Users table in the databasefile and then commits it (permanent)
@@ -50,7 +49,27 @@ def  get_entry(UserID:int):
     except Exception as e:
         return {f"Error occured : {e}"}
         
+# Retrieves an entry based on Email
+def get_by_email(Email:str):
+    
+    try:
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+        cursor.execute("""
+        SELECT * FROM Users 
+        WHERE Email = ?""", (Email,))
+        entry = cursor.fetchone()
+        conn.close()
 
+        if entry:
+            return entry
+        
+        else:
+            return (f"Error : User with Email {Email} not found")
+            
+        
+    except Exception as e:
+        return {f"Error occured : {e}"}
 
 # Updates an entry by its RegionID and then commits it
 def update_entry(UserID:int, Name:str, Role:str, Email:str, Password:str, AccessedRegions:str):
@@ -80,7 +99,35 @@ def update_entry(UserID:int, Name:str, Role:str, Email:str, Password:str, Access
 
     else:
         return (f"Error : User with ID {UserID} not found")
-  
+
+# Updates an entry by its Email and then commits it
+def update_by_mail(Name:str, Role:str, Email:str, Password:str, AccessedRegions:str):
+    
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute("""SELECT * FROM Users WHERE Email = ?""",(Email,))
+    entry = cursor.fetchone()
+
+    if entry:
+        
+        try:
+            cursor.execute("""
+            UPDATE Users
+            SET Name = ?,
+                Role = ?, 
+                Email = ?, 
+                Password = ?, 
+                AccessedRegions = ?
+            WHERE Email = ?""", 
+            (Name, Role, Email, Password, AccessedRegions, Email))
+            conn.commit()
+            conn.close()
+
+        except Exception as e:
+            print({f"Error occured : {e}"})
+
+    else:
+        return (f"Error : User with Email {Email} not found")
 
 # Deletes an entry based on its ID
 def  delete_entry(UserID:int):
@@ -106,6 +153,29 @@ def  delete_entry(UserID:int):
     else:
         return (f"Error : User with ID {UserID} not found")
 
+# Deletes an entry based on its Email
+def  delete_by_mail(Email:str):
+    
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute("""SELECT * FROM Users WHERE Email = ?""",(Email,))
+    entry = cursor.fetchone()
+    
+    if entry:
+       
+        try:
+            cursor.execute("""
+            DELETE FROM Users 
+            WHERE Email = ?""", (Email,))
+            conn.commit()
+            conn.close()
+            return None
+
+        except Exception as e:
+            return (f"Error occured : {e}")
+    
+    else:
+        return (f"Error : User with Email {Email} not found")
 
 # Prints all the entries present in the Users table
 def get_all():
