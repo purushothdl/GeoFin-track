@@ -5,8 +5,8 @@ st.sidebar.header('Dashboard')
 st.title('Welcome back, Admin')
 st.header('**Admin actions**')
 
-
 def main_dashboard():
+
     with st.container():
         
         col1, col2 = st.columns(2)
@@ -15,7 +15,10 @@ def main_dashboard():
             with st.form(key = 'user'):
                 st.markdown("### **Add New User**")
                 st.write("Create a new use account with specific roles and permissions.")
-                add_user = st.form_submit_button('Add User')
+                add_user = st.form_submit_button('Manage Users')
+
+                if add_user:
+                    st.switch_page('pages/admin/user_management.py')
                 
         
         with col2:
@@ -39,4 +42,5 @@ def main_dashboard():
                 st.markdown("### **User Logs**")
                 st.write("Review user activity logs for security and auditing purposes")
                 user_logs = st.form_submit_button('View Logs')
+    
 main_dashboard()

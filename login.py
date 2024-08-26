@@ -6,9 +6,9 @@
 
 import streamlit as st
 import sqlite3
-import os
 from pages.admin.outline import main_admin
 from user import user_page
+
 
 def authenticate_user(username, password, role):
     
