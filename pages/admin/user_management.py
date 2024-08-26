@@ -78,7 +78,7 @@ def main_user_management():
                         
                         if submit:
                                 update_entry(id, name, role, email, password, region )
-                                msg = st.toast(f"Updating user info... {get_next_id()}")
+                                msg = st.toast(f"Updating user info...")
                                 time.sleep(1)
                                 msg.toast('User data updated', icon = '✅')
 
