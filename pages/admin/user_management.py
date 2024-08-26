@@ -123,15 +123,15 @@ def main_user_management():
             with st.expander('**Enter the User Email**'):
                 mail = st.text_input('Email', key = 'mail_del')
                 delete = st.button('**Delete User**')
-
-            if delete:
-                outcome = delete_by_mail(mail)
-                if outcome is None:
-                    msg = st.toast('Deleting user from the database...')
-                    time.sleep(1)
-                    msg.toast('Successfully deleted', icon = "✅")
-                if outcome != None:
-                    st.error(outcome)
+    
+                if delete:
+                    outcome = delete_by_mail(mail)
+                    if outcome is None:
+                        msg = st.toast('Deleting user from the database...')
+                        time.sleep(1)
+                        msg.toast('Successfully deleted', icon = "✅")
+                    if outcome != None:
+                        st.error(outcome)
 
 
     with st.form(key = 'all'):
