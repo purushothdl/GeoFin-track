@@ -6,13 +6,17 @@
 
 import streamlit as st
 import sqlite3
+import os
 from pages.admin.outline import main_admin
 from user import user_page
 
+script_dir = os.path.dirname(__file__)
+db_path = os.path.join(script_dir, 'database', 'databasefile.db')
+db_path = os.path.abspath(db_path)
 
 def authenticate_user(username, password, role):
     
-    conn = sqlite3.connect('database/databasefile.db')
+    conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
     cursor.execute("""
