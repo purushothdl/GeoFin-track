@@ -192,7 +192,7 @@ def get_all():
         return (f"Error occured' : {e}")
 
 
-# Gets the next availabel UserID (also does garbage collection)
+# Gets the next available UserID (also does garbage collection)
 def get_next_id():
 
     user_id = []
