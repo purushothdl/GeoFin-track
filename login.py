@@ -6,13 +6,17 @@
 
 import streamlit as st
 import sqlite3
+import os
 from pages.admin.outline import main_admin
 from user import user_page
 
+script_dir = os.path.dirname(__file__)
+db_path = os.path.join(script_dir, 'database', 'databasefile.db')
+db_path = os.path.abspath(db_path)
 
 def authenticate_user(username, password, role):
     
-    conn = sqlite3.connect('database/databasefile.db')
+    conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
     cursor.execute("""
@@ -34,33 +38,60 @@ def login_page():
     
     
     # Create a form to handle submission
-    with st.form(key='login_form'):
-        st.title('GEOFIN TRACK')
-        # Display username, password and role inputs
-        username = st.text_input("Username")
-        password = st.text_input("Password", type="password")
-        options = ['admin', 'user']
-        role = st.selectbox('Select you role', options)
+    with st.container():
+        col1, col2 = st.columns(2)
+        with col1:
+            with st.form('login_form'):
+                with st.container():
+                    st.markdown("<h1 style='text-align: center; margin-left: 18px; color: black;'>GeoFinTrack</h1>", unsafe_allow_html=True)
+                    username = st.text_input('**Username**', placeholder = 'Username' )
+                    password = st.text_input('**Password**', type = 'password', placeholder = '******************')
+                    options = ['admin', 'user']
+                    role = st.selectbox('**Select role**', options)
+               
+                    st.write('')
+                    with st.container():
+                        col1, col2= st.columns(2)    
+                        with col1:
+                            login_button = st.form_submit_button("**Login**", type = 'primary')
+
+                        with col2:
+                            st.markdown("""
+                                <h6 style = '
+                                    text-align: center; 
+                                    margin-top: 9px;
+                                    margin-left: 0px;
+                                    font-weight: bold; 
+                                    color: rgb(10, 107, 254);'>
+                                        Forgot Password?
+                                </h6>""", unsafe_allow_html=True)
         
-        # Add login button
-        login_button = st.form_submit_button("Login")
+                    if login_button and role == 'admin' :
+                        if authenticate_user(username, password, role):
+                            st.session_state.logged_in_admin = True
+                            st.session_state.username = username
+                            st.rerun()
+                        else:
+                            st.error("Invalid username or password")
 
-        if login_button and role == 'admin' :
-            if authenticate_user(username, password, role):
-                st.session_state.logged_in_admin = True
-                st.session_state.username = username
-                st.rerun()
-            else:
-                st.error("Invalid username or password")
+                    if login_button and role == 'user':
+                        if authenticate_user(username, password, role):
+                            st.session_state.logged_in_user = True
+                            st.session_state.username = username
+                            st.rerun()
+                        else:
+                            st.error("Invalid username or password")
 
-        if login_button and role == 'user':
-            if authenticate_user(username, password, role):
-                st.session_state.logged_in_user = True
-                st.session_state.username = username
-                st.rerun()
-            else:
-                st.error("Invalid username or password")
-
+        st.markdown("""
+                <h6 style='
+                    text-size-adjut: none;
+                    display: block;
+                    font-size: 14px;
+                    margin-right: 0px;
+                    margin-left: 50px; 
+                    color: #808080;'>
+                        ©2024 GeoFinTrack. All rights reserved.
+                </h6>""", unsafe_allow_html=True)
 
 def main():
     if 'logged_in_admin' not in st.session_state:

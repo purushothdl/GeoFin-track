@@ -15,7 +15,7 @@ def main_dashboard():
             with st.form(key = 'user'):
                 st.markdown("### **Add New User**")
                 st.write("Create a new use account with specific roles and permissions.")
-                add_user = st.form_submit_button('Manage Users')
+                add_user = st.form_submit_button('Manage Users', type = 'primary')
 
                 if add_user:
                     st.switch_page('pages/admin/user_management.py')
@@ -25,7 +25,7 @@ def main_dashboard():
             with st.form(key = 'regions'):
                 st.write("### **Manage Regions**")
                 st.write("Add or update regions for better localization of services.")
-                manage_regions = st.form_submit_button('Manage Regions')
+                manage_regions = st.form_submit_button('Manage Regions', type = 'primary')
 
     with st.container():
 
@@ -35,12 +35,12 @@ def main_dashboard():
             with st.form(key = 'countries'):
                 st.markdown("### **Manage Countries**")
                 st.write("Add new countries or manage existing country information.")
-                manage_countries = st.form_submit_button('Manage Countries')
+                manage_countries = st.form_submit_button('Manage Countries', type = 'primary')
 
         with col2:
             with st.form(key = 'logs'):
                 st.markdown("### **User Logs**")
                 st.write("Review user activity logs for security and auditing purposes")
-                user_logs = st.form_submit_button('View Logs')
+                user_logs = st.form_submit_button('View Logs', type = 'primary')
     
 main_dashboard()
