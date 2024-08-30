@@ -1,8 +1,9 @@
 import streamlit as st
+from login import get_name
 
 st.set_page_config(page_title="Dashboard", page_icon=":material/dashboard:")
 st.sidebar.header('Dashboard')
-st.title('Welcome back, Admin')
+st.title(f"Welcome back,  {get_name()}")
 st.header('**Admin actions**')
 
 def main_dashboard():

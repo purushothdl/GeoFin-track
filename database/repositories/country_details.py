@@ -3,6 +3,7 @@
 import sqlite3
 import os
 
+
 # Get the path to the current databasefile
 script_dir = os.path.dirname(__file__)
 db_path = os.path.join(script_dir, '..', 'databasefile.db')
@@ -131,3 +132,37 @@ def get_all():
     except Exception as e:
         print({'Error occured' : f"{e}"})
 
+mapping = {'Asia-Pacific' : 1, 'Africa' : 2, 'North America' : 3, 'South America' : 4, 'Europe' : 5, 'Australia' : 6}
+
+def get_countries_from_region(region:str):
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute("""SELECT * FROM CountryDetails WHERE RegionID = ?""", (mapping[region],))
+    data = cursor.fetchall()
+    return data
+
+# Gets the next available UserID (also does garbage collection)
+def get_next_count_id():
+
+    user_id = []
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+
+    data = list(cursor.execute('select * from CountryDetails'))
+    conn.commit()
+    conn.close()
+    if not data:
+        return 1
+    
+    else:
+        for line in data:
+            user_id.append(line[0])
+        
+        for i in range(1, max(user_id)+1):
+            if i not in user_id:
+                return i
+            else:
+                set = True
+
+        if set:
+            return max(user_id) + 1

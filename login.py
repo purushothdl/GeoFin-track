@@ -1,5 +1,5 @@
 # create a login page for admin and user
-# login page should have a username, password, role and login button
+# login page should have a email, password, role and login button
 # in the users table add role as it is required to differentiate between admin and user
 # if the role is admin then the user should be redirected to the admin page
 # if the role is user then the user should be redirected to the user page
@@ -8,23 +8,24 @@ import streamlit as st
 import sqlite3
 import os
 from pages.admin.outline import main_admin
-from user import user_page
+from pages.user.outline import main_user
+from database.repositories.users import get_by_email
 
 script_dir = os.path.dirname(__file__)
 db_path = os.path.join(script_dir, 'database', 'databasefile.db')
 db_path = os.path.abspath(db_path)
 
-def authenticate_user(username, password, role):
+def authenticate_user(email, password, role):
     
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
     cursor.execute("""
         SELECT * FROM Users WHERE
-        Name = ? AND 
+        Email = ? AND 
         Role = ? AND
         Password = ?""",
-        (username, role, password))
+        (email, role, password))
     entry = cursor.fetchone()
     conn.close()
 
@@ -44,11 +45,12 @@ def login_page():
             with st.form('login_form'):
                 with st.container():
                     st.markdown("<h1 style='text-align: center; margin-left: 18px; color: black;'>GeoFinTrack</h1>", unsafe_allow_html=True)
-                    username = st.text_input('**Username**', placeholder = 'Username' )
+                    email = st.text_input('**Email**', placeholder = 'Enter you email' )
                     password = st.text_input('**Password**', type = 'password', placeholder = '******************')
                     options = ['admin', 'user']
                     role = st.selectbox('**Select role**', options)
-               
+
+                    st.session_state.email = email
                     st.write('')
                     with st.container():
                         col1, col2= st.columns(2)    
@@ -67,20 +69,20 @@ def login_page():
                                 </h6>""", unsafe_allow_html=True)
         
                     if login_button and role == 'admin' :
-                        if authenticate_user(username, password, role):
+                        if authenticate_user(email, password, role):
                             st.session_state.logged_in_admin = True
-                            st.session_state.username = username
+                            st.session_state.email = email
                             st.rerun()
                         else:
-                            st.error("Invalid username or password")
+                            st.error("Invalid email or password")
 
                     if login_button and role == 'user':
-                        if authenticate_user(username, password, role):
+                        if authenticate_user(email, password, role):
                             st.session_state.logged_in_user = True
-                            st.session_state.username = username
+                            st.session_state.email = email
                             st.rerun()
                         else:
-                            st.error("Invalid username or password")
+                            st.error("Invalid email or password")
 
         st.markdown("""
                 <h6 style='
@@ -93,6 +95,11 @@ def login_page():
                         ©2024 GeoFinTrack. All rights reserved.
                 </h6>""", unsafe_allow_html=True)
 
+def get_name():
+    data = get_by_email(st.session_state.email)
+    return data[1]
+
+
 def main():
     if 'logged_in_admin' not in st.session_state:
         st.session_state.logged_in_admin = False
@@ -104,7 +111,7 @@ def main():
         main_admin()
     
     elif st.session_state.logged_in_user:
-        user_page()
+        main_user()
 
     else:
         login_page()

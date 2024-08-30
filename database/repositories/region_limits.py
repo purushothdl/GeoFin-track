@@ -2,6 +2,7 @@
 import sqlite3
 import os
 
+
 # Get the path to the current databasefile
 script_dir = os.path.dirname(__file__)
 db_path = os.path.join(script_dir, '..', 'databasefile.db')
@@ -124,3 +125,4 @@ def get_all():
     
 
 
+# Get 
