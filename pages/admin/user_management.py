@@ -18,8 +18,8 @@ from database.repositories.users import(
 
 st.set_page_config(page_title="User Management", page_icon=":material/account_circle:")
 st.sidebar.header("User Management")
-st.title('USER MANAGEMENT')
-st.write('Add, Update or Delete users')
+st.title('User Management')
+st.write('Add, Update or Delete users.')
 
 # The below two functions return the neatly formatted continent names
 def get_user_regions(email:str):
@@ -52,25 +52,27 @@ def main_user_management():
                     password = st.text_input('Password', key = 'password_ad')
                     region_add = st.multiselect(
                                 "Accessed Regions",
-                                ["Asia", "Africa", "North America", "South America", "Europe", "Australia"],
+                                ["Asia", "Africa", "North America", "South America", "Europe", "Oceania"],
                                 placeholder = 'choose from below')
-
+                    region = str(region_add).replace("'", '"')
 
                     submit = st.form_submit_button('**Add**', use_container_width = True)
                     
 
                     if submit:       
                             try:
-                                outcome = add_entry(int(id), str(name), str(role), str(email), str(password), str(region_add))
+                                outcome = add_entry(int(id), name, str(role), str(email), str(password), region)
                                 if outcome is None:
                                     msg = st.toast('Adding user to the database...')
                                     time.sleep(1)
                                     msg.toast('Successfully added', icon = "✅")
                     
                                 else:
-                                    st.error(f"{outcome}")   
+                                    st.error(f"{outcome}")
+                                    
                             except Exception as e:
                                 st.error(f"{e}")
+
                             
 
         with col2:
@@ -107,7 +109,7 @@ def main_user_management():
                             role = st.selectbox('Select you role', options, index = index, key = 'role_up')
                             email = st.text_input('Email', data[3], key = 'email_up')
                             password = st.text_input('Password', data[4], key = 'password_up')
-                            all_continents = ["Asia-Pacific", "Africa", "North America", "South America", "Europe", "Australia"]
+                            all_continents = ["Asia", "Africa", "North America", "South America", "Europe", "Oceania"]
                             region = st.multiselect('AccessedRegion', options = all_continents, default = get_user_continents(email), key = 'region_up')
                             submit = st.form_submit_button('**Update**', use_container_width = True)    
                             region = str(region).replace("'", '"')
@@ -165,17 +167,25 @@ def main_user_management():
             st.header('**Delete User**')
             st.write('Delete the existing user from the database by the User Email.')
             with st.expander('**Enter the User Email**'):
-                mail = st.text_input('Email', key = 'mail_del')
-                delete = st.button('**Delete User**', use_container_width = True)
+                # mail = st.text_input('Email', key = 'mail_del')
+                # delete = st.button('**Delete User**', use_container_width = True)
+                # with st.form(key = 'del_form', border = False):
+                    mail = st.text_input('Email', placeholder = 'Press enter to proceed', key = 'mail_del')
+                    
 
-            if delete:
-                outcome = delete_by_mail(mail)
-                if outcome is None:
-                    msg = st.toast('Deleting user from the database...')
-                    time.sleep(1)
-                    msg.toast('Successfully deleted', icon = "✅")
-                if outcome != None:
-                    st.error(outcome)
+                    if mail != '':
+                        
+                        delete = st.button('**Delete User**', use_container_width = True)
+                        if delete:
+                            outcome = delete_by_mail(mail)
+                            
+                            if outcome is None:
+                                msg = st.toast('Deleting user from the database...')
+                                time.sleep(1)
+                                msg.toast('Successfully deleted', icon = "✅")
+                            
+                            else:
+                                st.error(outcome)
 
 
     with st.form(key = 'all'):

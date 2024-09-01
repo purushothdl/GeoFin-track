@@ -140,8 +140,110 @@ with st.container():
                         msg = st.toast('Deleting country from the database...')
                         time.sleep(1)
                         msg.toast('Successfully deleted', icon = "✅")
-                        time.sleep(2)
-                        st.rerun()
                     
                     else:
                         st.error(outcome)
+
+st.write('')
+st.info("To view information about all the countries present in a region head over to region management.")
+
+
+df = pd.read_csv('pages/user/countries.csv')
+
+def get_lat_lon(country_name):
+    # Filter the DataFrame for the country
+    result = df[df['Country'] == country_name.title()]
+    if not result.empty:
+        location = result.iloc[0]
+        return location['Latitude'], location['Longitude']
+    return None, None
+
+
+def region_map(region:str):
+    
+    all_countries = get_country_name(region)
+
+    data = {
+    'Country': [],
+    'Latitude': [],
+    'Longitude': []
+    }
+
+    for country in all_countries:
+        lat, lon = get_lat_lon(country)
+        if lat is not None and lon is not None:
+            data['Country'].append(country)
+            data['Latitude'].append(lat)
+            data['Longitude'].append(lon)
+        else:
+            print(f"Skipping {country} due to missing coordinates.")
+
+    df = pd.DataFrame(data)
+
+    if not df.empty:
+        # Create a Pydeck Layer
+        layer = pdk.Layer(
+            'ScatterplotLayer',
+            df,
+            get_position=['Longitude', 'Latitude'],
+            get_fill_color=[255, 0, 0, 140],  # Red color with some transparency
+            get_radius=50000,  # Radius in meters
+            pickable=True
+        )
+
+        text_layer = pdk.Layer(
+            'TextLayer',
+            df,
+            get_position=['Longitude', 'Latitude'],
+            get_text='Country',
+            get_size=24,
+            get_color=[0, 0, 0, 255],  # Black color for text
+            get_angle=0,
+            get_text_anchor='middle'
+        )
+        
+        # Create a Pydeck View
+        view_state = pdk.ViewState(
+            latitude=df['Latitude'].mean(),
+            longitude=df['Longitude'].mean(),
+            zoom=2,
+            pitch=0
+        )
+
+        # Create the deck
+        deck = pdk.Deck(
+            layers=[layer],
+            initial_view_state=view_state,
+            tooltip={"text": "{Country}"}
+        )
+
+        # Streamlit App
+        st.subheader(region)
+        st.pydeck_chart(deck)
+        st.caption('The above map represents the countries that are presently accessed by the user.')
+    else:
+        st.write("No valid data available to display on the map.")
+
+
+st.write('')
+st.header("Accessed Countries")
+tabs = st.tabs(["Asia", "Africa", "North America", "South America", "Europe", "Oceania"])
+
+with tabs[0]:
+    region_map("Asia")
+
+with tabs[1]:
+    region_map("Africa")
+
+with tabs[2]:
+    region_map("North America")
+
+with tabs[3]:
+    region_map("South America")
+
+with tabs[4]:
+    region_map("Europe")
+
+with tabs[5]:
+    region_map("Oceania")
+

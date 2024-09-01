@@ -1,8 +1,5 @@
-# All the sql queries for the country_limits table will be defined here
-
 import sqlite3
 import os
-
 
 # Get the path to the current databasefile
 script_dir = os.path.dirname(__file__)
@@ -24,44 +21,46 @@ def add_entry(
             TradeOS, TreasuryLimits, TreasuryOS, TotalLimit, TotalOSLimit)
             
             VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""", (
-            CountryID, RegionID, CountryName, GFILimit, GFIInstitue, TradeLimits, 
-            TradeOS, TreasuryLimits, TreasuryOS, TotalLimit, TotalOSLimit))
+            int(CountryID), int(RegionID), CountryName, float(GFILimit), float(GFIInstitue), float(TradeLimits), 
+            float(TradeOS), float(TreasuryLimits), float(TreasuryOS), float(TotalLimit), float(TotalOSLimit)))
         conn.commit()
         conn.close()
+        return None
     
     except Exception as e:
-        print({f"Error occured' : {e}"})
+        return (f"Error occured' : {e}")
 
 
-# Retreives an entry based on its CountryID
-def get_entry(CountryID:int):
+# Retreives an entry based on its CountryName
+def get_entry(CountryName:str):
     
     try:
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
         cursor.execute("""
             SELECT * FROM CountryDetails
-            WHERE CountryID = ? """, (CountryID,))
+            WHERE CountryName = ? """, (CountryName,))
         entry = cursor.fetchone()
         conn.close()
 
         if entry:
             return entry
+            
         else:
-            return {'Error' : f"Country with ID {CountryID} doesn't exist"}
+            return (f"Error : Country with name {CountryName} doesn't exist")
 
     except Exception as e:
-        print({'Error occured' : f"{e}"})
+        return (f"Error occured : {e}")
 
 
-# Updates the entry in the country_details table with its CountryID and commits it
+# Updates the entry in the country_details table and commits it
 def update_entry(
-        CountryID:int, RegionID:int, CountryName:str, GFILimit:float, GFIInstitue:float, TradeLimits:float, 
+        CountryName:str, GFILimit:float, GFIInstitue:float, TradeLimits:float, 
         TradeOS:float, TreasuryLimits:float, TreasuryOS:float, TotalLimit:float, TotalOSLimit:float):
     
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM CountryDetails WHERE CountryID = ?", (CountryID,))
+    cursor.execute("SELECT * FROM CountryDetails WHERE CountryName = ?", (CountryName,))
     entry = cursor.fetchone()
     
     if entry:
@@ -69,9 +68,7 @@ def update_entry(
         try:
             cursor.execute("""
                 UPDATE CountryDetails
-                SET RegionID = ?, 
-                    CountryName = ?, 
-                    GFILimit = ?, 
+                SET GFILimit = ?, 
                     GFIInstitue = ?, 
                     TradeLimits = ?, 
                     TradeOS = ?, 
@@ -79,25 +76,26 @@ def update_entry(
                     TreasuryOS = ?, 
                     TotalLimit = ?, 
                     TotalOSLimit = ?
-                WHERE CountryID = ?""",
-                (RegionID, CountryName, GFILimit, GFIInstitue, TradeLimits, 
-                TradeOS, TreasuryLimits, TreasuryOS, TotalLimit, TotalOSLimit, CountryID,))
+                WHERE CountryName = ?""",
+                (float(GFILimit), float(GFIInstitue), float(TradeLimits), 
+                float(TradeOS), float(TreasuryLimits), float(TreasuryOS), float(TotalLimit), float(TotalOSLimit), CountryName))
             conn.commit()
             conn.close()
+            return None
         
         except Exception as e:
-            print({'Error occured' : f"{e}"})
+            return (f"Error occured : {e}")
 
     else:
-        print({'Error' : f"Country with ID {CountryID} doesn't exist"})
+        return (f"Error : Country with name {CountryName} doesn't exist")
             
 
-# Removes an entry based on its CountryID and commits it
-def delete_entry(CountryID:int):
+# Removes an entry based on its CountryName and commits it
+def delete_entry(CountryName:str):
 
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM CountryDetails WHERE CountryID = ?", (CountryID,))
+    cursor.execute("SELECT * FROM CountryDetails WHERE CountryName = ?", (CountryName,))
     entry = cursor.fetchone()
     
     if entry:        
@@ -105,15 +103,16 @@ def delete_entry(CountryID:int):
             try:
                 cursor.execute("""
                     DELETE FROM CountryDetails
-                    WHERE CountryID = ? """, (CountryID,))
+                    WHERE CountryName = ? """, (CountryName,))
                 conn.commit()
                 conn.close()
+                return None
 
             except Exception as e:
-                print({'Error occured' : f"{e}"})
+                return (f"Error occured : {e}")
 
     else:
-        print({'Error' : f"Country with ID {CountryID} doesn't exist"})
+        return (f"Error : Country with name {CountryName} doesn't exist")
     
 
 # Returns all the entries present in the country_details table
@@ -132,9 +131,10 @@ def get_all():
     except Exception as e:
         print({'Error occured' : f"{e}"})
 
-mapping = {'Asia-Pacific' : 1, 'Africa' : 2, 'North America' : 3, 'South America' : 4, 'Europe' : 5, 'Australia' : 6}
 
+# Returns all the countries present in a region
 def get_countries_from_region(region:str):
+    mapping = {'Asia' : 1, 'Africa' : 2, 'North America' : 3, 'South America' : 4, 'Europe' : 5, 'Oceania' : 6}
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
     cursor.execute("""SELECT * FROM CountryDetails WHERE RegionID = ?""", (mapping[region],))
@@ -166,3 +166,4 @@ def get_next_count_id():
 
         if set:
             return max(user_id) + 1
+        
