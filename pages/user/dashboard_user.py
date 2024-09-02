@@ -23,11 +23,6 @@ def get_lat_lon(country_name):
     return None, None
 
 
-def get_country_name(region):
-    vals = get_countries_from_region(region)
-    countries = [country[2] for country in vals ]
-    return countries
-
 def get_user_regions():
     data = get_by_email(st.session_state.email)
     return str(data[-1][1:-1])
@@ -37,6 +32,11 @@ def get_user_continents():
     vals = get_user_regions().split(',')
     vals = [country.replace('"','').strip() for country in vals]
     return vals
+
+def get_country_name(region:str):
+    vals = get_countries_from_region(region)
+    countries = [country[2] for country in vals]
+    return countries
 
 def total_countries():
     total = []
@@ -74,22 +74,6 @@ def main_dashboard():
                     st.button("Close", on_click=lambda: st.expander("Form Submitted", expanded=False), type = 'primary')
 
         st.write('')
-
-    # with st.container():
-
-    #     col1, col2 = st.columns(2)
-
-    #     with col1:
-    #         with st.form(key = 'countries'):
-    #             st.markdown("### **Manage Countries**")
-    #             st.write("Add new countries or manage existing country information.")
-    #             manage_countries = st.form_submit_button('Manage Countries', type = 'primary')
-
-    #     with col2:
-    #         with st.form(key = 'logs'):
-    #             st.markdown("### **User Logs**")
-    #             st.write("Review user activity logs for security and auditing purposes")
-    #             user_logs = st.form_submit_button('View Logs', type = 'primary')
 
 
     all_countries = total_countries()
@@ -156,18 +140,18 @@ def main_dashboard():
         st.write("No valid data available to display on the map.")
 
 
-    # mapping = {'Asia-Pacific' : 1, 'Africa' : 2, 'North America' : 3, 'South America' : 4, 'Europe' : 5, 'Australia' : 6}
+    
 
     st.write('')
     st.write('')
-    [Asia_Pacific, Africa, North_America, South_America, Europe, Australia] = st.tabs(['Asia-Pacific', 'Africa', 'North America', 'South America', 'Europe', 'Australia'])
+    [Asia_Pacific, Africa, North_America, South_America, Europe, Oceania] = st.tabs(['Asia', 'Africa', 'North America', 'South America', 'Europe', 'Oceania'])
     
     all_continents = get_user_continents()
 
     with Asia_Pacific:
-        if 'Asia-Pacific' in all_continents:
-            st.subheader('Asia-Pacific')
-            entries = get_countries_from_region('Asia-Pacific')
+        if 'Asia' in all_continents:
+            st.subheader('Asia')
+            entries = get_countries_from_region('Asia')
             data = pd.DataFrame(entries, columns = ['CountryID', 'RegionID', 'CountryName', 'GFILimit', 'GFIInstitue', 'TradeLimits', 
                     'TradeOS', 'TreasuryLimits', 'TreasuryOS', 'TotalLimit', 'TotalOSLimit'] )
             data = data.sort_values(by = 'CountryID', ascending = True)
@@ -224,10 +208,10 @@ def main_dashboard():
             else:
                 st.info('This region is currently not accessible by you. Contact administrator for further info.')
 
-        with Australia:
-            if 'Australia' in all_continents:
-                st.subheader('Australia')
-                entries = get_countries_from_region('Australia')
+        with Oceania:
+            if 'Oceania' in all_continents:
+                st.subheader('Oceania')
+                entries = get_countries_from_region('Oceania')
                 data = pd.DataFrame(entries, columns = ['CountryID', 'RegionID', 'CountryName', 'GFILimit', 'GFIInstitue', 'TradeLimits', 
                         'TradeOS', 'TreasuryLimits', 'TreasuryOS', 'TotalLimit', 'TotalOSLimit'] )
                 data = data.sort_values(by = 'CountryID', ascending = True)

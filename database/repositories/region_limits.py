@@ -18,7 +18,7 @@ def add_entry(RegionID:int,RegionName:str, TotalLimitsUSD:float, TotalOutstandin
         cursor = conn.cursor()
         cursor.execute("""
             INSERT INTO RegionLimits(RegionID, RegionName, TotalLimitsUSD, TotalOutstandingUSD)
-            VALUES(?, ?, ?, ?)""", (RegionID, RegionName, TotalLimitsUSD, TotalOutstandingUSD))
+            VALUES(?, ?, ?, ?)""", (int(RegionID), RegionName, float(TotalLimitsUSD), float(TotalOutstandingUSD)))
         conn.commit()
         conn.close()
 
@@ -28,14 +28,14 @@ def add_entry(RegionID:int,RegionName:str, TotalLimitsUSD:float, TotalOutstandin
 
 
 # Retreives an entry based on its ID
-def get_entry(RegionID:int):
+def get_entry(RegionName:str):
 
     try:
         conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
         cursor.execute("""
             SELECT * FROM RegionLimits
-            WHERE RegionID = ? """, (RegionID,))
+            WHERE RegionName = ? """, (RegionName,))
         entry = cursor.fetchone()
         conn.close()
 
@@ -43,7 +43,7 @@ def get_entry(RegionID:int):
             return entry
         
         else:
-            print({'Error' : f"RegionID with ID {RegionID} doesn't exist"})
+            print({'Error' : f"Region with Name {RegionName} doesn't exist"})
             return None
 
     except Exception as e:
@@ -53,11 +53,11 @@ def get_entry(RegionID:int):
     
 
 # Updates an entry by its RegionID and then commits it
-def update_entry(RegionID:int,RegionName:str, TotalLimitsUSD:float, TotalOutstandingUSD:float):
+def update_entry(RegionName:str, TotalLimitsUSD:float, TotalOutstandingUSD:float):
     
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
-    cursor.execute("""SELECT * FROM RegionLimits WHERE RegionID = ?""",(RegionID,))
+    cursor.execute("""SELECT * FROM RegionLimits WHERE RegionName = ?""",(RegionName,))
     entry = cursor.fetchone()
     
     if entry:
@@ -65,21 +65,19 @@ def update_entry(RegionID:int,RegionName:str, TotalLimitsUSD:float, TotalOutstan
             try:
                 cursor.execute("""
                     UPDATE RegionLimits 
-                    SET RegionName = ?,
-                        TotalLimitsUSD = ?,
+                    SET TotalLimitsUSD = ?,
                         TotalOutstandingUSD = ?
-                    WHERE RegionID = ?""", 
-                    (RegionName, TotalLimitsUSD, TotalOutstandingUSD, RegionID))
+                    WHERE RegionName = ?""", 
+                    (float(TotalLimitsUSD), float(TotalOutstandingUSD), RegionName))
                 conn.commit()
                 conn.close()
-
-            except Exception as e:
-                print(f"Error occured : {e}")
                 return None
 
+            except Exception as e:
+                return (f"Error occured : {e}")           
+
     else:
-        print({'Error' : f"RegionID with ID {RegionID} doesn't exist"})
-        return None
+        return (f"Error : Region with RegionName {RegionName} doesn't exist")
     
 
 # Deletes an entry from the databasefile and then commits it 
@@ -116,13 +114,8 @@ def get_all():
             SELECT * FROM RegionLimits """)
         data = cursor.fetchall()
         conn.close()
-
-        for entry in data:
-            print(entry)
-
+        # data = [region[1] for region in data]
+        return data
     except Exception as e:
-        print(f"Error occured : {e}")
+        return (f"Error occured : {e}")
     
-
-
-# Get 

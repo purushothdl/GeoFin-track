@@ -28,6 +28,9 @@ def main_dashboard():
                 st.write("Add or update regions for better localization of services.")
                 manage_regions = st.form_submit_button('Manage Regions', type = 'primary')
 
+                if manage_regions:
+                    st.switch_page('pages/admin/region_management.py')
+
     with st.container():
 
         col1, col2 = st.columns(2)
@@ -37,6 +40,9 @@ def main_dashboard():
                 st.markdown("### **Manage Countries**")
                 st.write("Add new countries or manage existing country information.")
                 manage_countries = st.form_submit_button('Manage Countries', type = 'primary')
+
+                if manage_countries:
+                    st.switch_page('pages/admin/country_management.py')
 
         with col2:
             with st.form(key = 'logs'):

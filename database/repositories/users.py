@@ -18,7 +18,7 @@ def add_entry(UserID:int, Name:str, Role:str, Email:str, Password:str, AccessedR
         cursor = conn.cursor()
         cursor.execute("""
         INSERT INTO Users(UserID, Name, Role, Email, Password, AccessedRegions)
-        VALUES(?, ?, ?, ?, ?, ?)""", (UserID, Name, Role, Email, Password, AccessedRegions))
+        VALUES(?, ?, ?, ?, ?, ?)""", (int(UserID), str(Name), str(Role), str(Email), str(Password), str(AccessedRegions)))
         conn.commit()
         conn.close()
         return None
@@ -90,7 +90,7 @@ def update_entry(UserID:int, Name:str, Role:str, Email:str, Password:str, Access
                 Password = ?, 
                 AccessedRegions = ?
             WHERE UserID = ?""", 
-            (Name, Role, Email, Password, AccessedRegions, UserID))
+            (str(Name), str(Role), str(Email), str(Password), str(AccessedRegions), UserID))
             conn.commit()
             conn.close()
 
@@ -119,7 +119,7 @@ def update_by_mail(Name:str, Role:str, Email:str, Password:str, AccessedRegions:
                 Password = ?, 
                 AccessedRegions = ?
             WHERE Email = ?""", 
-            (Name, Role, Email, Password, AccessedRegions, Email))
+            (str(Name), str(Role), str(Email), str(Password), str(AccessedRegions), str(Email)))
             conn.commit()
             conn.close()
 

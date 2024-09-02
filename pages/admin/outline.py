@@ -16,6 +16,18 @@ def main_admin():
     icon = ':material/account_circle:'
     )
 
-    pg = st.navigation(pages = [dashboard, user_management])
+    region_management = st.Page(
+    page = 'pages/admin/region_management.py',
+    title = 'Region Management',
+    icon = ':material/language:'
+    )
+
+    country_management = st.Page(
+    page = 'pages/admin/country_management.py',
+    title = 'country Management',
+    icon = ':material/south_america:'
+    )
+
+    pg = st.navigation(pages = [dashboard, user_management, region_management, country_management])
     pg.run()
     
