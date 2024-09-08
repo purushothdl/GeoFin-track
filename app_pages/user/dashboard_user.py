@@ -93,7 +93,7 @@ html_string_dboard = """
         text-align: center;  
         padding: 5px; 
         border-radius: 10px;
-        margin-bottom: 340px;
+        margin-bottom: 200px;
     ">
         <p style="margin: 0; font-size: 18px; font-weight: bold; color: black;">
             Dashboard
@@ -148,7 +148,7 @@ def main_dashboard():
                 add_user = st.form_submit_button('Manage Countries', type = 'primary')
 
                 if add_user:
-                    st.switch_page('pages/user/country_manage_user.py')
+                    st.switch_page('app_pages/user/country_manage_user.py')
 
         
         with col2:

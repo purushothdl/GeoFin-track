@@ -22,8 +22,8 @@ def get_country_name(region:str):
 
 # Returns the countries that are not present in the database for a given region
 def avail_countries(region:str):
-    all = all_countries[region]
     present = get_country_name(region)
+    all = all_countries[region]
     for country in all:
         if country in present:
             all.remove(country)
@@ -125,7 +125,7 @@ def region_map(region:str):
 
 
 # Country icon and caption for sidebar using html and css
-local_image_path = "images/user/country.webp"  # Adjust this path as necessary
+local_image_path = "images/user/country.webp"  
 image_base64 = image_to_base64(local_image_path)
 
 html_img = f"""
@@ -187,6 +187,7 @@ with st.container():
                         outcome = add_entry( count_id, region_id, country, gfi_limit, gfi_insitute, trade_limits,
                                                 trade_os, treasury_limits, treasury_os, total_limit, total_os_limit )
                         if outcome is None:
+                            
                             msg = st.toast(f'Adding country to the database...')
                             time.sleep(1)
                             msg.toast('Successfully added', icon = "✅")
@@ -271,6 +272,7 @@ with st.container():
                     outcome = delete_entry(count_name)
                     
                     if outcome is None:
+                        total_accessed_countries.remove(country)
                         msg = st.toast('Deleting country from the database...')
                         time.sleep(1)
                         msg.toast('Successfully deleted', icon = "✅")

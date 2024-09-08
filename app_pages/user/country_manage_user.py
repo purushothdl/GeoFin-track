@@ -94,7 +94,7 @@ with st.container():
                 
                 st.write('')   
                 count_id = get_next_count_id()
-                region = st.selectbox("**Region**", ["Asia", "Africa", "North America", "South America", "Europe", "Oceania"], key='region_ip')
+                region = st.selectbox("**Region**", get_user_continents(), key='region_ip')
                 mapping = {'Asia' : 1, 'Africa' : 2, 'North America' : 3, 'South America' : 4, 'Europe' : 5, 'Oceania' : 6}
                 region_id = mapping[region]
                 countries = all_countries.get(region, [])
@@ -141,7 +141,7 @@ with st.container():
             st.write('')
             with st.expander('**Update Country Info**'):               
                 
-                region = st.selectbox('Region', options = ["Asia", "Africa", "North America", "South America", "Europe", "Oceania"], placeholder = 'Enter region')
+                region = st.selectbox('Region', options = get_user_continents(), placeholder = 'Enter region')
                 country = st.selectbox('Country', options = get_country_name(region), key = 'country_up')
                 data = get_entry(country)
                 gfi_limit = st.text_input("**GFILimit**", data[3], key='gfi_up')
@@ -183,7 +183,7 @@ with st.container():
 
         st.write('Retrieve an existing Country and its info from the database.')
         with st.expander('**Enter the Country Details**'):
-            region = st.selectbox('**Region**', options = ["Asia", "Africa", "North America", "South America", "Europe", "Oceania"], placeholder = 'Enter region')
+            region = st.selectbox('**Region**', options = get_user_continents(), placeholder = 'Enter region')
             count_name = st.selectbox('**Country**', options = get_country_name(region))
             data = get_entry(count_name)
             
