@@ -8,7 +8,7 @@ import base64
 
 
 
-st.set_page_config(page_title="Country Management", page_icon=":material/south_america:")
+#st.set_page_config(page_title="Country Management", page_icon=":material/south_america:")
 
 
 ## All the defined functions in this page
