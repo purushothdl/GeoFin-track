@@ -27,7 +27,7 @@ def add_entry(RegionID:int,RegionName:str, TotalLimitsUSD:float, TotalOutstandin
         return None
 
 
-# Retreives an entry based on its ID
+# Retreives an entry based on its name
 def get_entry(RegionName:str):
 
     try:
@@ -52,7 +52,7 @@ def get_entry(RegionName:str):
     
     
 
-# Updates an entry by its RegionID and then commits it
+# Updates an entry and then commits it
 def update_entry(RegionName:str, TotalLimitsUSD:float, TotalOutstandingUSD:float):
     
     conn = sqlite3.connect(db_path)

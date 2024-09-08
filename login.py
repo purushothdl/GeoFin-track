@@ -7,8 +7,8 @@
 import streamlit as st
 import sqlite3
 import os
-from pages.admin.outline import main_admin
-from pages.user.outline import main_user
+from app_pages.admin.outline import main_admin
+from app_pages.user.outline import main_user
 from database.repositories.users import get_by_email
 
 script_dir = os.path.dirname(__file__)

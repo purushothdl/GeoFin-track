@@ -2,7 +2,9 @@
 
 
 
-all_countries = { "Africa": [
+all_countries = {
+        
+        "Africa": [
             "Algeria", "Angola", "Benin", "Botswana", "Burkina Faso",
             "Burundi", "Cabo Verde", "Cameroon", "Central African Republic", "Chad",
             "Comoros", "Congo, Democratic Republic of the", "Congo, Republic of the", "Djibouti", "Egypt",
@@ -13,8 +15,9 @@ all_countries = { "Africa": [
             "Mozambique", "Namibia", "Niger", "Nigeria", "Rwanda",
             "Sao Tome and Principe", "Senegal", "Seychelles", "Sierra Leone", "Somalia",
             "South Africa", "South Sudan", "Sudan", "Togo", "Tunisia",
-            "Uganda", "United Republic of Tanzania", "Zambia", "Zimbabwe"
-        ],
+            "Uganda", "United Republic of Tanzania", "Zambia", "Zimbabwe"],
+        
+
         "Asia": [
             "Afghanistan", "Armenia", "Azerbaijan", "Bahrain", "Bangladesh",
             "Bhutan", "Brunei", "Cambodia", "China", "Cyprus",
@@ -25,8 +28,9 @@ all_countries = { "Africa": [
             "Pakistan", "Palestine", "Philippines", "Qatar", "Saudi Arabia",
             "Singapore", "South Korea", "Sri Lanka", "Syria", "Tajikistan",
             "Thailand", "Timor-Leste", "Turkey", "Turkmenistan", "United Arab Emirates",
-            "Uzbekistan", "Vietnam", "Yemen"
-        ],
+            "Uzbekistan", "Vietnam", "Yemen" ],
+        
+
         "Europe": [
             "Albania", "Andorra", "Armenia", "Austria", "Azerbaijan",
             "Belarus", "Belgium", "Bosnia and Herzegovina", "Bulgaria", "Croatia",
@@ -38,20 +42,23 @@ all_countries = { "Africa": [
             "Norway", "Poland", "Portugal", "Romania", "Russia",
             "San Marino", "Serbia", "Slovakia", "Slovenia", "Spain",
             "Sweden", "Switzerland", "Turkey", "Ukraine", "United Kingdom",
-            "Vatican City"
-        ],
+            "Vatican City"],
+        
+        
         "North America": [
             "Antigua and Barbuda", "Bahamas", "Barbados", "Belize", "Canada",
             "Costa Rica", "Cuba", "Dominica", "Dominican Republic", "El Salvador",
             "Grenada", "Guatemala", "Haiti", "Honduras", "Jamaica",
             "Mexico", "Nicaragua", "Panama", "Saint Kitts and Nevis", "Saint Lucia",
-            "Saint Vincent and the Grenadines", "Trinidad and Tobago", "United States"
-        ],
+            "Saint Vincent and the Grenadines", "Trinidad and Tobago", "United States"],
+        
+        
         "Oceania": [
             "Australia", "Fiji", "Kiribati", "Marshall Islands", "Micronesia",
             "Nauru", "New Zealand", "Palau", "Papua New Guinea", "Samoa",
-            "Solomon Islands", "Tonga", "Tuvalu", "Vanuatu"
-        ],
+            "Solomon Islands", "Tonga", "Tuvalu", "Vanuatu"],
+        
+        
         "South America": [
             "Argentina", "Bolivia", "Brazil", "Chile", "Colombia",
             "Ecuador", "Guyana", "Paraguay", "Peru", "Suriname",
