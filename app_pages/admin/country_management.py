@@ -23,7 +23,7 @@ def get_country_name(region:str):
 # Returns the countries that are not present in the database for a given region
 def avail_countries(region:str):
     present = get_country_name(region)
-    all = all_countries[region]
+    all = all_countries[region].copy()
     for country in all:
         if country in present:
             all.remove(country)
