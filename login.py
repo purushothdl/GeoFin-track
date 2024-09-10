@@ -7,8 +7,9 @@
 import streamlit as st
 import sqlite3
 import os
-from pages.admin.outline import main_admin
-from pages.user.outline import main_user
+import base64
+from app_pages.admin.outline import main_admin
+from app_pages.user.outline import main_user
 from database.repositories.users import get_by_email
 
 script_dir = os.path.dirname(__file__)
@@ -33,7 +34,12 @@ def authenticate_user(email, password, role):
         return True
     else:
         return False
-    
+
+# Function to encode image as base64 (for sidebar)
+def image_to_base64(image_path):
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode()    
+
 
 def login_page():
     
@@ -41,6 +47,22 @@ def login_page():
     # Create a form to handle submission
     with st.container():
         col1, col2 = st.columns(2)
+
+        with col2:
+            
+            local_image_path = "images/logos/fintrack.webp"  # Adjust this path as necessary
+            image_base64 = image_to_base64(local_image_path)
+
+            html_img = f"""
+                <div style="text-align: center; width: 100%; height: 100%;">
+                    <img src="data:image/jpeg;base64,{image_base64}" style="width: 100%; 
+                    margin-top: 50px; margin-left: 30px; height: auto; max-width: 100%; max-height: 100%;" />
+                </div>
+            """
+            st.markdown(html_img, unsafe_allow_html=True)
+
+
+
         with col1:
             with st.form('login_form'):
                 with st.container():
@@ -94,6 +116,9 @@ def login_page():
                     color: #808080;'>
                         ©2024 GeoFinTrack. All rights reserved.
                 </h6>""", unsafe_allow_html=True)
+        
+
+
 
 def get_name():
     data = get_by_email(st.session_state.email)

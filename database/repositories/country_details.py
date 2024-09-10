@@ -141,7 +141,8 @@ def get_countries_from_region(region:str):
     data = cursor.fetchall()
     return data
 
-# Gets the next available UserID (also does garbage collection)
+
+# Gets the next available CountryID (also does garbage collection)
 def get_next_count_id():
 
     user_id = []

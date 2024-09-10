@@ -2,18 +2,25 @@ import streamlit as st
 from login import get_name
 from database.repositories.users import get_by_email
 import pandas as pd
-from database.repositories.country_details import  get_countries_from_region
+from database.repositories.country_details import  get_countries_from_region, get_entry
 import pydeck as pdk
+import time
+import base64
 
 
+#st.set_page_config(page_title="Dashboard", page_icon=":material/dashboard:")
 
-st.set_page_config(page_title="Dashboard", page_icon=":material/dashboard:")
-st.sidebar.header('Dashboard')
-st.title(f"Hello,  {get_name()}")
-st.header('**User actions**')
 
-df = pd.read_csv('pages/user/countries.csv')
+### All the defined functions in this page
 
+# Function to encode image as base64 (for sidebar)
+def image_to_base64(image_path):
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode()
+
+
+# Gives coordinates of the countries stored in csv file
+df = pd.read_csv('app_pages/user/countries.csv')
 def get_lat_lon(country_name):
     # Filter the DataFrame for the country
     result = df[df['Country'] == country_name.title()]
@@ -23,21 +30,26 @@ def get_lat_lon(country_name):
     return None, None
 
 
+# The below two functions are extensions of one another. Returns the regions accessed by the current logged in user
+# in string and list format respectively.
 def get_user_regions():
     data = get_by_email(st.session_state.email)
     return str(data[-1][1:-1])
-
 
 def get_user_continents():
     vals = get_user_regions().split(',')
     vals = [country.replace('"','').strip() for country in vals]
     return vals
 
+
+# Returns all the country names from a given region
 def get_country_name(region:str):
     vals = get_countries_from_region(region)
     countries = [country[2] for country in vals]
     return countries
 
+
+# Returns the list of countries present in the region
 def total_countries():
     total = []
     for c in get_user_continents():
@@ -45,10 +57,88 @@ def total_countries():
     return total
 
 
+# Welcome message for the user
+welcome = f"Welcome Back, {get_name()}"
+html_string_dboard = f"""
+    <div style="
+        background-color: #d4f1f4; 
+        text-align: center;  
+        padding: 1px;
+        border: 1px solid black; 
+        border-radius: 10px;
+    ">
+        <h3 style=" font-size: 40px; font-weight: bold; color: black;">
+            {welcome}
+        </h3>
+    </div>
+"""
+st.markdown(html_string_dboard, unsafe_allow_html=True)
+
+
+# Dashboard icon and caption for sidebar using html and css
+local_image_path = "images/user/dashboard.webp"  # Adjust this path as necessary
+image_base64 = image_to_base64(local_image_path)
+
+html_img = f"""
+    <div style="text-align: center;">
+        <img src="data:image/jpeg;base64,{image_base64}" style = "width: 50%; padding-bottom: 12px;" />
+        
+    </div>
+"""
+st.sidebar.markdown(html_img, unsafe_allow_html=True)
+
+html_string_dboard = """
+    <div style="
+        background-color: #E1EBEE; 
+        text-align: center;  
+        padding: 5px; 
+        border-radius: 10px;
+        margin-bottom: 200px;
+    ">
+        <p style="margin: 0; font-size: 18px; font-weight: bold; color: black;">
+            Dashboard
+        </p>
+    </div>
+"""
+st.sidebar.markdown(html_string_dboard, unsafe_allow_html=True)
+
+
+# Enabling the sidebar using javascript (as it was disabled during logout)
+enable_sidebar_js = """
+<script>
+const sidebar = window.parent.document.querySelector('section[data-testid="stSidebar"]');
+if (sidebar) {
+    sidebar.style.display = 'block';
+}
+</script>
+    """
+st.components.v1.html(enable_sidebar_js, height=0, width=0)
+
+
+# Logout functionality
+if st.sidebar.button("Logout", type = 'primary', use_container_width = True):
+    st.session_state.logged_in_user = False
+    st.toast("Logging out...", icon = "🔄")
+    time.sleep(2)
+    
+    hide_sidebar_js = """
+        <script>
+        const sidebar = window.parent.document.querySelector('section[data-testid="stSidebar"]');
+        if (sidebar) {
+            sidebar.style.display = 'none';
+        }
+        </script>
+    """
+    st.components.v1.html(hide_sidebar_js, height=0, width=0)
+    time.sleep(1)
+    st.rerun()
+
+
+# Streamlit program start
+st.header('**User actions**')
 def main_dashboard():
 
     with st.container():
-        
         col1, col2 = st.columns(2, gap = 'small')
         
         with col1:
@@ -58,8 +148,8 @@ def main_dashboard():
                 add_user = st.form_submit_button('Manage Countries', type = 'primary')
 
                 if add_user:
-                    st.switch_page('pages/user/country_manage_user.py')
-                
+                    st.switch_page('app_pages/user/country_manage_user.py')
+
         
         with col2:
             with st.form(key = 'regions'):
@@ -70,18 +160,21 @@ def main_dashboard():
             if assign_regions:
                 with st.expander("Accessed Regions", expanded=True):
                     for continent in get_user_continents():
-                        st.info(continent, icon = "◾" )
-                    st.button("Close", on_click=lambda: st.expander("Form Submitted", expanded=False), type = 'primary')
+                        st.info(continent )
+                    st.button("Close", on_click=lambda: st.expander("Form Submitted", expanded=False), type = 'secondary', use_container_width = True)
 
         st.write('')
 
 
+    # Pydeck map to display countries in accessed regions
     all_countries = total_countries()
 
     data = {
     'Country': [],
     'Latitude': [],
-    'Longitude': []
+    'Longitude': [],
+    'tl_limits': [],
+    'tl_os_limits': []
     }
 
     for country in all_countries:
@@ -90,9 +183,15 @@ def main_dashboard():
             data['Country'].append(country)
             data['Latitude'].append(lat)
             data['Longitude'].append(lon)
+            data['tl_limits'].append(get_entry(country)[-2])
+            data['tl_os_limits'].append(get_entry(country)[-1])
         else:
             print(f"Skipping {country} due to missing coordinates.")
-
+    
+    # Convert total_limits and total_os_limits into Billions
+    data['tl_limits'] = [round(int(val)/(10**9), 3)  for val in data['tl_limits']]
+    data['tl_os_limits'] = [round(int(val)/(10**9),3) for val in data['tl_os_limits']]
+    
     df = pd.DataFrame(data)
 
     if not df.empty:
@@ -101,7 +200,7 @@ def main_dashboard():
             'ScatterplotLayer',
             df,
             get_position=['Longitude', 'Latitude'],
-            get_fill_color=[255, 0, 0, 140],  # Red color with some transparency
+            get_fill_color=[255, 0, 0, 200],  # Red color with some transparency
             get_radius=50000,  # Radius in meters
             pickable=True
         )
@@ -129,7 +228,7 @@ def main_dashboard():
         deck = pdk.Deck(
             layers=[layer],
             initial_view_state=view_state,
-            tooltip={"text": "{Country}"}
+            tooltip={"text": "{Country}\n TotalLimitUSD: {tl_limits} Billion\n TotalOSLimitUSD: {tl_os_limits} Billion"}
         )
 
         # Streamlit App
@@ -139,11 +238,10 @@ def main_dashboard():
     else:
         st.write("No valid data available to display on the map.")
 
-
-    
-
     st.write('')
     st.write('')
+
+    # Tabs for different regions to display country details in dataframe
     [Asia_Pacific, Africa, North_America, South_America, Europe, Oceania] = st.tabs(['Asia', 'Africa', 'North America', 'South America', 'Europe', 'Oceania'])
     
     all_continents = get_user_continents()

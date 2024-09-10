@@ -1,5 +1,6 @@
 import sqlite3
 
+# Initialises database
 conn= sqlite3.connect('database/databasefile.db')
 cursor = conn.cursor()
 
@@ -36,6 +37,7 @@ CREATE TABLE IF NOT EXISTS Users(
     Password  VARCHAR, 
     AccessedRegions VARCHAR)
 """
+
 
 # Creates table format
 cursor.execute(RegionLimits)

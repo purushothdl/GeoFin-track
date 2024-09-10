@@ -1,15 +1,12 @@
 import streamlit as st
-import os
+import base64
 import time
 import pandas as pd
 
 from database.repositories.users import(
     add_entry,
-    get_entry, 
     get_by_email, 
-    update_entry,
     update_by_mail,  
-    delete_entry,
     delete_by_mail, 
     get_all, 
     get_next_id
@@ -17,15 +14,16 @@ from database.repositories.users import(
 
 
 st.set_page_config(page_title="User Management", page_icon=":material/account_circle:")
-st.sidebar.header("User Management")
 st.title('User Management')
-st.write('Add, Update or Delete users.')
+
+
+## Contains all the functions defined in this page
 
 # The below two functions return the neatly formatted continent names
+# in string and list format respectivley
 def get_user_regions(email:str):
     data = get_by_email(email)
     return str(data[-1][1:-1])
-
 
 def get_user_continents(email:str):
     vals = get_user_regions(email).split(',')
@@ -33,11 +31,51 @@ def get_user_continents(email:str):
     vals = [country.replace("'",'').strip() for country in vals]
     return vals
 
+
+# Function to encode image as base64 (for sidebar)
+def image_to_base64(image_path):
+    with open(image_path, "rb") as image_file:
+        return base64.b64encode(image_file.read()).decode()
+
+
+# User icon and caption for sidebar using html and css
+local_image_path = "images/admin/user.webp"  # Adjust this path as necessary
+image_base64 = image_to_base64(local_image_path)
+
+html_img = f"""
+    <div style="text-align: center;">
+        <img src="data:image/jpeg;base64,{image_base64}" style = "width: 50%; padding-bottom: 12px;" />
+        
+    </div>
+"""
+st.sidebar.markdown(html_img, unsafe_allow_html=True)
+
+html_string_dboard = """
+    <div style="
+        background-color: #E1EBEE; 
+        text-align: center;  
+        padding: 5px; 
+        border-radius: 10px;
+        margin-bottom: 270px;
+    ">
+        <p style="margin: 0; font-size: 18px; font-weight: bold; color: black;">
+            User Management
+        </p>
+    </div>
+"""
+st.sidebar.markdown(html_string_dboard, unsafe_allow_html=True)
+
+
+# Streamlit start
+st.write('Add, Update or Delete users.')
 def main_user_management():
 
     with st.container():
         col1, col2 = st.columns(2)
+        
+        # Adds new user to the database
         with col1:
+            
             st.header("**Add User**")
             st.write("Add new users to the database. Click the dropdown menu to add new users to the database. ")
             st.write('\n')
@@ -74,32 +112,20 @@ def main_user_management():
                                 st.error(f"{e}")
 
                             
-
+        # Updates existing user from the database
         with col2:
         
             st.header("**Update User**")
             st.write("Update existing users in the database by the User Email.")
             st.write('')
-            with st.expander('**Enter the User Email**'):   
-                
+            with st.expander('**Enter the User Email**'):    
                 mail = st.text_input('Email', placeholder = 'Press enter to view user')
-                # st.divider()
+                
                 if mail != '':
                     data = get_by_email(mail)
 
                     if 'Error' not in data:
                        
-                        # with st.popover('**Update User information**'):
-                        #     # id = st.text_input('ID', data[0], key = 'id_up')
-                        #     name = st.text_input('Name', data[1], key = 'name_up' )
-                        #     options = ['admin', 'user']
-                        #     index = options.index(data[2])
-                        #     role = st.selectbox('Select you role', options, index = index, key = 'role_up')
-                        #     email = st.text_input('Email', data[3], key = 'email_up')
-                        #     password = st.text_input('Password', data[4], key = 'password_up')
-                        #     region  = st.text_input('AccessedRegion', data[5], key = 'region_up')
-                        #     submit = st.button('**Update**')   
-
                         with st.form('**Update User information**', clear_on_submit = True, border = False):
                             # id = st.text_input('ID', data[0], key = 'id_up')
                             st.markdown("<h3 style='text-align: center; margin-left: 18px; color: black; font-weight: bold;'>UPDATE USER</h3>", unsafe_allow_html=True)
@@ -124,10 +150,9 @@ def main_user_management():
                           
                     else:
                         st.error(data)
-                        #st.error(f"Error : User with Email {mail} not found")
-                    
+                     
                             
-
+    # Retrieves existing user from the database
     with st.container():
         col1, col2 = st.columns(2)
 
@@ -138,18 +163,6 @@ def main_user_management():
             with st.expander('**Enter the User Email**'):
                 mail = st.text_input('Email', key = 'mail_get' ,placeholder = 'Press enter to view user')  
                 
-                
-                # if get:
-                #     entry = get_by_email(mail)
-                    
-                #     if 'Error' in entry:
-                #         st.error(f"{entry}")
-                    
-                #     else:
-                #         with st.popover('**Show User**'):
-                #             data = pd.DataFrame(entry).values.reshape(1, -1)
-                #             data = pd.DataFrame(data, columns = ['UserID', 'Name', 'Role', 'Email', 'Password', 'AccessedRegions'])
-                #             st.dataframe(data, hide_index = True)
                 if mail != '':
                     data = get_by_email(mail)
                     if 'Error' in data:
@@ -160,34 +173,31 @@ def main_user_management():
                             data = pd.DataFrame(data, columns = ['UserID', 'Name', 'Role', 'Email', 'Password', 'AccessedRegions'])
                             st.dataframe(data, hide_index = True)   
                         
-                    # close = st.button('**close**', key = 'close_get')
-    
+
+        # Delete user from the database
         with col2:
 
             st.header('**Delete User**')
             st.write('Delete the existing user from the database by the User Email.')
             with st.expander('**Enter the User Email**'):
-                # mail = st.text_input('Email', key = 'mail_del')
-                # delete = st.button('**Delete User**', use_container_width = True)
-                # with st.form(key = 'del_form', border = False):
-                    mail = st.text_input('Email', placeholder = 'Press enter to proceed', key = 'mail_del')
+                mail = st.text_input('Email', placeholder = 'Press enter to proceed', key = 'mail_del')
+                
+                if mail != '':
                     
-
-                    if mail != '':
+                    delete = st.button('**Delete User**', use_container_width = True)
+                    if delete:
+                        outcome = delete_by_mail(mail)
                         
-                        delete = st.button('**Delete User**', use_container_width = True)
-                        if delete:
-                            outcome = delete_by_mail(mail)
-                            
-                            if outcome is None:
-                                msg = st.toast('Deleting user from the database...')
-                                time.sleep(1)
-                                msg.toast('Successfully deleted', icon = "✅")
-                            
-                            else:
-                                st.error(outcome)
+                        if outcome is None:
+                            msg = st.toast('Deleting user from the database...')
+                            time.sleep(1)
+                            msg.toast('Successfully deleted', icon = "✅")
+                        
+                        else:
+                            st.error(outcome)
 
 
+    # Displays all the users in the database
     with st.form(key = 'all'):
         
         st.markdown("## **Show all Users**")

@@ -1,17 +1,17 @@
 import streamlit as st
 
-# Multiple pages navigation
+# Multiple pages navigation for user
 def main_user():
     
     dashboard = st.Page(
-    page = 'pages/user/dashboard_user.py',
+    page = 'app_pages/user/dashboard_user.py',
     title = 'Dashboard',
     icon = ':material/dashboard:',
     default = True   
     )
 
     user_management = st.Page(
-    page = 'pages/user/country_manage_user.py',
+    page = 'app_pages/user/country_manage_user.py',
     title = 'Country Management',
     icon = ':material/globe_asia:'
     )
