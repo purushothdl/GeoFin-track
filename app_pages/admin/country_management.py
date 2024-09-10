@@ -272,7 +272,6 @@ with st.container():
                     outcome = delete_entry(count_name)
                     
                     if outcome is None:
-                        total_accessed_countries.remove(country)
                         msg = st.toast('Deleting country from the database...')
                         time.sleep(1)
                         msg.toast('Successfully deleted', icon = "✅")
