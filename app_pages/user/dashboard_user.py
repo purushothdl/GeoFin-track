@@ -8,7 +8,7 @@ import time
 import base64
 
 
-st.set_page_config(page_title="Dashboard", page_icon=":material/dashboard:")
+#st.set_page_config(page_title="Dashboard", page_icon=":material/dashboard:")
 
 
 ### All the defined functions in this page
