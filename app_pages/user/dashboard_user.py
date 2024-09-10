@@ -201,7 +201,7 @@ def main_dashboard():
             df,
             get_position=['Longitude', 'Latitude'],
             get_fill_color=[255, 0, 0, 200],  # Red color with some transparency
-            get_radius=80000,  # Radius in meters
+            get_radius=50000,  # Radius in meters
             pickable=True
         )
 
